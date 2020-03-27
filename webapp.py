@@ -34,14 +34,12 @@ def upload_file():
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 			image = cv2.imread(os.path.dirname(os.path.realpath(__file__))+"/uploads/"+filename)
-			color_result = getDominantColor(image)
 			result = catOrDog(image)
 			redirect(url_for('upload_file',filename=filename))
 			return '''
 			<!doctype html>
 			<title>Results</title>
 			<h1>Image contains a - '''+result+'''</h1>
-			<h2>Dominant color is - '''+color_result+'''</h2>
 			<form method=post enctype=multipart/form-data>
 			  <input type=file name=file>
 			  <input type=submit value=Upload>
@@ -71,14 +69,6 @@ def catOrDog(image):
 		res = "Dog"
 	K.clear_session()
 	return res
-
-def getDominantColor(image):
-	'''returns the dominate color among Blue, Green and Reds in the image '''
-	B, G, R = cv2.split(image)
-	B, G, R = np.sum(B), np.sum(G), np.sum(R)
-	color_sums = [B,G,R]
-	color_values = {"0": "Blue", "1":"Green", "2": "Red"}
-	return color_values[str(np.argmax(color_sums))]
 	
 if __name__ == "__main__":
 	app.run()
